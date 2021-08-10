@@ -3,7 +3,6 @@ const core = require('@actions/core');
 const config = require('./config');
 
 async function startEc2Instance(label, githubRegistrationToken) {
-  AWS.config.update({region:'us-east-1'});
   const ec2 = new AWS.EC2();
 
   // User data scripts are run as the root user.
@@ -16,7 +15,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
     'tar xzf ./actions-runner-linux-${RUNNER_ARCH}-2.278.0.tar.gz',
     'export RUNNER_ALLOW_RUNASROOT=1',
     'export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1',
-    `./config.sh --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label}`,
+    `./config.sh --url https://github.com/${config.githubContext.owner} --token ${githubRegistrationToken} --labels ${label}`,
     './run.sh',
   ];
 
