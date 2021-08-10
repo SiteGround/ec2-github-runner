@@ -8,8 +8,10 @@ const config = require('./config');
 async function getRunner(label) {
   const octokit = github.getOctokit(config.input.githubToken);
 
+// orgs/WealthBerry/actions/runners/registration-token
+
   try {
-    const runners = await octokit.paginate('GET /repos/{owner}/{repo}/actions/runners', config.githubContext);
+    const runners = await octokit.paginate('GET /orgs/{owner}/actions/runners', config.githubContext);
     const foundRunners = _.filter(runners, { labels: [{ name: label }] });
     return foundRunners.length > 0 ? foundRunners[0] : null;
   } catch (error) {
@@ -22,7 +24,7 @@ async function getRegistrationToken() {
   const octokit = github.getOctokit(config.input.githubToken);
 
   try {
-    const response = await octokit.request('POST /repos/{owner}/{repo}/actions/runners/registration-token', config.githubContext);
+    const response = await octokit.request('POST /orgs/{owner}/actions/runners/registration-token', config.githubContext);
     core.info('GitHub Registration Token is received');
     return response.data.token;
   } catch (error) {
@@ -32,7 +34,10 @@ async function getRegistrationToken() {
 }
 
 async function removeRunner() {
-  const runner = await getRunner(config.input.label);
+  const runner = await 
+  
+  
+  (config.input.label);
   const octokit = github.getOctokit(config.input.githubToken);
 
   // skip the runner removal process if the runner is not found
@@ -42,7 +47,7 @@ async function removeRunner() {
   }
 
   try {
-    await octokit.request('DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}', _.merge(config.githubContext, { runner_id: runner.id }));
+    await octokit.request('DELETE /orgs/{owner}/actions/runners/{runner_id}', _.merge(config.githubContext, { runner_id: runner.id }));
     core.info(`GitHub self-hosted runner ${runner.name} is removed`);
     return;
   } catch (error) {
