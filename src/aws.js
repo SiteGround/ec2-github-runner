@@ -3,6 +3,7 @@ const core = require('@actions/core');
 const config = require('./config');
 
 async function startEc2Instance(label, githubRegistrationToken) {
+  AWS.config.update({region:'us-east-1'});
   const ec2 = new AWS.EC2();
 
   // User data scripts are run as the root user.
