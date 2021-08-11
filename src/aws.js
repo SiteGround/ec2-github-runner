@@ -36,6 +36,12 @@ async function startEc2Instance(label, githubRegistrationToken) {
       Groups:[config.input.securityGroupId],
       SubnetId: config.input.subnetId,
       AssociatePublicIpAddress: true
+    }],
+    BlockDeviceMappings: [{
+      DeviceName: "/dev/sda1",
+      Ebs: {
+        VolumeSize: 100
+      }
     }]
   };
 
