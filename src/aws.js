@@ -28,7 +28,15 @@ async function startEc2Instance(label, githubRegistrationToken) {
     SubnetId: config.input.subnetId,
     SecurityGroupIds: [config.input.securityGroupId],
     IamInstanceProfile: { Name: config.input.iamRoleName },
-    TagSpecifications: config.tagSpecifications
+    TagSpecifications: config.tagSpecifications,
+    NetworkInterfaces: [{
+      DeleteOnTermination: true,
+      Description: 'STRING_VALUE',
+      DeviceIndex: 0,
+      Groups:[config.input.securityGroupId],
+      SubnetId: config.input.subnetId,
+      AssociatePublicIpAddress: true
+    }]
   };
 
   try {
