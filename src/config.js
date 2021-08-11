@@ -26,7 +26,7 @@ class Config {
     // provided by the GitHub Action on the runtime
     this.githubContext = {
       owner: github.context.repo.owner,
-      repo: github.context.repo.repo,
+      // repo: github.context.repo.repo,
     };
 
     //
