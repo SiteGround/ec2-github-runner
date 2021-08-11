@@ -24,7 +24,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
     InstanceType: config.input.ec2InstanceType,
     MinCount: 1,
     MaxCount: 1,
-    // UserData: Buffer.from(userData.join('\n')).toString('base64'),
+    UserData: Buffer.from(userData.join('\n')).toString('base64'),
     // SubnetId: config.input.subnetId,
     // SecurityGroupIds: [config.input.securityGroupId],
     IamInstanceProfile: { Name: config.input.iamRoleName },
@@ -38,8 +38,6 @@ async function startEc2Instance(label, githubRegistrationToken) {
       AssociatePublicIpAddress: true
     }]
   };
-
-  core.info(JSON.stringify(params));
 
   try {
     const result = await ec2.runInstances(params).promise();
@@ -61,10 +59,10 @@ async function terminateEc2Instance() {
 
   try {
     await ec2.terminateInstances(params).promise();
-    core.info(`AWS EC2 instance ${config.input.ec2InstanceId} is terminated`);
+    core.info(`AWS EC2 instance ${config.input.ec2InstanceId} is terminated!!`);
     return;
   } catch (error) {
-    core.error(`AWS EC2 instance ${config.input.ec2InstanceId} termination error`);
+    core.error(`AWS EC2 instance ${config.input.ec2InstanceId} termination error!!`);
     throw error;
   }
 }
@@ -78,7 +76,7 @@ async function waitForInstanceRunning(ec2InstanceId) {
 
   try {
     await ec2.waitFor('instanceRunning', params).promise();
-    core.info(`AWS EC2 instance ${ec2InstanceId} is up and running`);
+    core.info(`AWS EC2 instance ${ec2InstanceId} is up and running!!`);
     core.info(JSON.stringify(params));
     return;
   } catch (error) {
