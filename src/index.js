@@ -24,7 +24,9 @@ async function stop() {
 
 (async function () {
   try {
-    config.input.mode === 'start' ? await start() : await stop();
+    console.log(123123);
+    core.info(`KUR!!`);
+    // config.input.mode === 'start' ? await start() : await stop();
   } catch (error) {
     core.error(error);
     core.setFailed(error.message);
