@@ -34,10 +34,7 @@ async function getRegistrationToken() {
 }
 
 async function removeRunner() {
-  const runner = await 
-  
-  
-  (config.input.label);
+  const runner = await getRunner(config.input.label);
   const octokit = github.getOctokit(config.input.githubToken);
 
   // skip the runner removal process if the runner is not found
