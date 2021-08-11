@@ -40,7 +40,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
     BlockDeviceMappings: [{
       DeviceName: "/dev/sda1",
       Ebs: {
-        VolumeSize: 100
+        VolumeSize: 20
       }
     }]
   };
