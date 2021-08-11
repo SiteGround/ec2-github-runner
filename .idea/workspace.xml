@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="54455b37-5f2a-4d58-97de-e19286f1575d" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aws.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/aws.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -37,7 +36,7 @@
       <option name="presentableId" value="Default" />
       <updated>1628603551077</updated>
       <workItem from="1628603552694" duration="4479000" />
-      <workItem from="1628668365418" duration="2166000" />
+      <workItem from="1628668365418" duration="2459000" />
     </task>
     <servers />
   </component>
