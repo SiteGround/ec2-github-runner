@@ -34,7 +34,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
       Description: 'STRING_VALUE',
       DeviceIndex: 0,
       Groups:[config.input.securityGroupId],
-      SubnetId: config.input.subnetId,
+      // SubnetId: config.input.subnetId,
       AssociatePublicIpAddress: true
     }],
     BlockDeviceMappings: [{
