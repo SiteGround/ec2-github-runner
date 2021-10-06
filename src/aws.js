@@ -1,5 +1,3 @@
-import {KeyPairName} from "aws-sdk/clients/ec2";
-
 const AWS = require('aws-sdk');
 const core = require('@actions/core');
 const config = require('./config');
