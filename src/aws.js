@@ -47,8 +47,10 @@ async function startEc2Instance(label, githubRegistrationToken) {
 
   if (config.input.withSubnet) {
     params.NetworkInterfaces[0].SubnetId = config.input.subnetId;
-    // params.SubnetId = config.input.subnetId;
-    // params.SecurityGroupIds = [config.input.securityGroupId];
+  }
+
+  if (config.input.keyName) {
+    params.keyName = config.input.keyName;
   }
 
   console.log('params', JSON.stringify(params,undefined, 2));

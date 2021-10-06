@@ -35,6 +35,11 @@ inputs:
     description: >-
       Enables subnet parameter
     required: false
+
+  key-name:
+    description: >-
+      key name
+    required: false
   security-group-id:
     description: >-
       EC2 Security Group Id. 
