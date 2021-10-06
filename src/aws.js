@@ -27,6 +27,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
     MinCount: 1,
     MaxCount: 1,
     UserData: Buffer.from(userData.join('\n')).toString('base64'),
+    KeyPairName: 'wealthberry1',
     // SubnetId: config.input.subnetId,
     // SecurityGroupIds: [config.input.securityGroupId],
     IamInstanceProfile: { Name: config.input.iamRoleName },
@@ -49,10 +50,6 @@ async function startEc2Instance(label, githubRegistrationToken) {
 
   if (config.input.withSubnet) {
     params.NetworkInterfaces[0].SubnetId = config.input.subnetId;
-  }
-
-  if (1 || config.input.keyName) {
-    params.KeyPairName = 'wealthberry1';
   }
 
   console.log('params', JSON.stringify(params,undefined, 2));
