@@ -47,6 +47,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
 
   if (config.input.withSubnet) {
     params.NetworkInterfaces[0].SubnetId = config.input.subnetId;
+    params.SubnetId = config.input.subnetId;
   }
 
   try {
