@@ -1,3 +1,5 @@
+import {KeyPairName} from "aws-sdk/clients/ec2";
+
 const AWS = require('aws-sdk');
 const core = require('@actions/core');
 const config = require('./config');
@@ -50,7 +52,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
   }
 
   if (config.input.keyName) {
-    params.keyName = config.input.keyName;
+    params.KeyPairName = config.input.keyName;
   }
 
   console.log('params', JSON.stringify(params,undefined, 2));
