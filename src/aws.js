@@ -45,6 +45,10 @@ async function startEc2Instance(label, githubRegistrationToken) {
     }]
   };
 
+  if (config.input.withSubnet) {
+    params.NetworkInterfaces[0].SubnetId = config.input.subnetId;
+  }
+
   try {
     const result = await ec2.runInstances(params).promise();
     const ec2InstanceId = result.Instances[0].InstanceId;
