@@ -33,7 +33,7 @@ inputs:
 
   with-subnet:
     description: >-
-      Enables subnet parameter
+      Enables subnet parameter.
     required: false
 
   key-name:
