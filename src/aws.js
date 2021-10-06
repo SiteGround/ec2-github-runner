@@ -46,9 +46,14 @@ async function startEc2Instance(label, githubRegistrationToken) {
   };
 
   if (config.input.withSubnet) {
+    // delete params.NetworkInterfaces;
     params.NetworkInterfaces[0].SubnetId = config.input.subnetId;
     params.SubnetId = config.input.subnetId;
+    params.SecurityGroupIds = [config.input.securityGroupId];
   }
+
+  console.log('params', JSON.stringify(params,undefined, 2));
+  console.log('input', JSON.stringify(config.input,undefined, 2));
 
   try {
     const result = await ec2.runInstances(params).promise();
