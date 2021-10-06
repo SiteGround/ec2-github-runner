@@ -36,6 +36,13 @@ async function startEc2Instance(label, githubRegistrationToken) {
       Groups:[config.input.securityGroupId],
       // SubnetId: config.input.subnetId,
       AssociatePublicIpAddress: true
+    }, {
+      DeleteOnTermination: true,
+      Description: 'STRING_VALUE',
+      DeviceIndex: 1,
+      Groups:[config.input.securityGroupId],
+      // SubnetId: config.input.subnetId,
+      AssociatePublicIpAddress: true
     }],
     BlockDeviceMappings: [{
       DeviceName: "/dev/sda1",
@@ -48,6 +55,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
   if (config.input.withSubnet) {
     // delete params.NetworkInterfaces;
     params.NetworkInterfaces[0].SubnetId = config.input.subnetId;
+    params.NetworkInterfaces[1].SubnetId = config.input.subnetId;
     // params.SubnetId = config.input.subnetId;
     // params.SecurityGroupIds = [config.input.securityGroupId];
   }
