@@ -28,18 +28,12 @@ async function startEc2Instance(label, githubRegistrationToken) {
     // SubnetId: config.input.subnetId,
     // SecurityGroupIds: [config.input.securityGroupId],
     IamInstanceProfile: { Name: config.input.iamRoleName },
+    AssociatePublicIpAddress: true,
     TagSpecifications: config.tagSpecifications,
     NetworkInterfaces: [{
       DeleteOnTermination: true,
       Description: 'STRING_VALUE',
       DeviceIndex: 0,
-      Groups:[config.input.securityGroupId],
-      // SubnetId: config.input.subnetId,
-      AssociatePublicIpAddress: true
-    }, {
-      DeleteOnTermination: true,
-      Description: 'STRING_VALUE',
-      DeviceIndex: 1,
       Groups:[config.input.securityGroupId],
       // SubnetId: config.input.subnetId,
       AssociatePublicIpAddress: true
@@ -55,7 +49,6 @@ async function startEc2Instance(label, githubRegistrationToken) {
   if (config.input.withSubnet) {
     // delete params.NetworkInterfaces;
     params.NetworkInterfaces[0].SubnetId = config.input.subnetId;
-    params.NetworkInterfaces[1].SubnetId = config.input.subnetId;
     // params.SubnetId = config.input.subnetId;
     // params.SecurityGroupIds = [config.input.securityGroupId];
   }
