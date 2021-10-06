@@ -33,12 +33,7 @@ inputs:
 
   with-subnet:
     description: >-
-      Enables subnet parameter.
-    required: false
-
-  key-name:
-    description: >-
-      key name
+      Enables subnet parameter
     required: false
   security-group-id:
     description: >-
