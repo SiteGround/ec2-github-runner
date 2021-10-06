@@ -26,9 +26,9 @@ async function startEc2Instance(label, githubRegistrationToken) {
     MaxCount: 1,
     UserData: Buffer.from(userData.join('\n')).toString('base64'),
     KeyName: 'wealthberry1',
-    
+
     // SubnetId: config.input.subnetId,
-    // SecurityGroupIds: [config.input.securityGroupId],
+    SecurityGroupIds: [config.input.securityGroupId],
     IamInstanceProfile: { Name: config.input.iamRoleName },
     TagSpecifications: config.tagSpecifications,
     NetworkInterfaces: [{
