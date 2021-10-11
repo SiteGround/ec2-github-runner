@@ -52,6 +52,7 @@ class Config {
       } else if (!this.input.ec2InstanceId) {
         throw new Error(`this.input.ec2InstanceId NOT provided for the 'stop' mode`);
       }
+      
     } else {
       throw new Error('Wrong mode. Allowed values: start, stop.');
     }
