@@ -23,7 +23,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
     ImageId: config.input.ec2ImageId,
     InstanceType: config.input.ec2InstanceType,
     MinCount: 1,
-    MaxCount: 2,
+    MaxCount: 1,
     UserData: Buffer.from(userData.join('\n')).toString('base64'),
     KeyName: 'wealthberry1',
     // SubnetId: config.input.subnetId,
@@ -37,12 +37,6 @@ async function startEc2Instance(label, githubRegistrationToken) {
       Groups:[config.input.securityGroupId],
       // SubnetId: config.input.subnetId,
       AssociatePublicIpAddress: true
-    }],
-    BlockDeviceMappings: [{
-      DeviceName: "/dev/sda1",
-      Ebs: {
-        VolumeSize: 20
-      }
     }]
   };
 
