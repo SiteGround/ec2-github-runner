@@ -9,7 +9,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
   // Docker and git are necessary for GitHub runner and should be pre-installed on the AMI.
   const userData = [
     '#!/bin/bash',
-    'mkdir actions-runner && cd actions-runner',
+    'mkdir -p /actions-runner && cd /actions-runner && rm -f .runner',
     'case $(uname -m) in aarch64) ARCH="arm64" ;; amd64|x86_64) ARCH="x64" ;; esac && export RUNNER_ARCH=${ARCH}',
     'curl -O -L https://github.com/actions/runner/releases/download/v2.278.0/actions-runner-linux-${RUNNER_ARCH}-2.278.0.tar.gz',
     'tar xzf ./actions-runner-linux-${RUNNER_ARCH}-2.278.0.tar.gz',
