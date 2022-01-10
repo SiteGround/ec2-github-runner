@@ -16,7 +16,6 @@ async function startEc2Instance(label, githubRegistrationToken) {
     'curl -O -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz',
     'tar xzf ./actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz',
     'export RUNNER_ALLOW_RUNASROOT=1',
-    'export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1',
     `./config.sh --url https://github.com/${config.githubContext.owner} --token ${githubRegistrationToken} --labels ${label}`,
     './run.sh',
   ];
