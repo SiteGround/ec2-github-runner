@@ -21,14 +21,14 @@ async function startEc2Instance(label, githubRegistrationToken) {
   ];
 
   const params = {
-    ImageId: config.input.ec2ImageId,
+    ImageId: 'ami-0b18afa1197252021',
     InstanceType: config.input.ec2InstanceType,
     MinCount: 1,
     MaxCount: 1,
     UserData: Buffer.from(userData.join('\n')).toString('base64'),
     // SubnetId: config.input.subnetId,
     // SecurityGroupIds: [config.input.securityGroupId],
-    IamInstanceProfile: { Name: config.input.iamRoleName },
+    IamInstanceProfile: { Name: 'EC2_LOGS' },
     TagSpecifications: config.tagSpecifications,
     NetworkInterfaces: [{
       DeleteOnTermination: true,
