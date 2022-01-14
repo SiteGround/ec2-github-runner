@@ -21,7 +21,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
   ];
 
   const params = {
-    ImageId: 'ami-0b18afa1197252021',
+    ImageId: config.input.ec2ImageId,
     InstanceType: config.input.ec2InstanceType,
     MinCount: 1,
     MaxCount: 1,
