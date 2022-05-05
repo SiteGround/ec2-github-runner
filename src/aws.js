@@ -19,7 +19,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
     userData.push(`./config.sh --url https://github.com/${config.githubContext.owner} --token ${githubRegistrationToken} --labels ${label}`);
     userData.push('./run.sh');
   } else {
-    userData.push('cd /actions-runner');
+    userData.push('cd /actions-runner && rm -f .runner');
     userData.push('export RUNNER_ALLOW_RUNASROOT=1');
     userData.push(`./config.sh --url https://github.com/${config.githubContext.owner} --token ${githubRegistrationToken} --labels ${label}`);
     userData.push('./run.sh');
