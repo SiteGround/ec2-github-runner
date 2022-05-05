@@ -15,6 +15,10 @@ inputs:
     description: >-
       GitHub Personal Access Token with the 'repo' scope assigned.
     required: true
+  update-runner:
+    description: >-
+      Set to true if github runner should be updated to the latest stable on instance run
+    required: false
   ec2-image-id:
     description: >-
       EC2 Image Id (AMI). The new runner will be launched from this image.

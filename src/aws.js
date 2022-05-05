@@ -4,21 +4,26 @@ const config = require('./config');
 
 async function startEc2Instance(label, githubRegistrationToken) {
   const ec2 = new AWS.EC2();
-
+  const userData = [];
+  userData.push('#!/bin/bash');
   // User data scripts are run as the root user.
   // Docker and git are necessary for GitHub runner and should be pre-installed on the AMI.
-  const userData = [
-    '#!/bin/bash',
-    'mkdir -p /actions-runner && cd /actions-runner && rm -f .runner',
-    'apt-get -y update && apt-get install -y jq',
-    'case $(uname -m) in aarch64) ARCH="arm64" ;; amd64|x86_64) ARCH="x64" ;; esac && export RUNNER_ARCH=${ARCH}',
-    'export RUNNER_VERSION=$(curl -s -X GET \'https://api.github.com/repos/actions/runner/releases/latest\' | jq -r \'.tag_name\' | sed s/v//)',
-    'curl -O -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz',
-    'tar xzf ./actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz',
-    'export RUNNER_ALLOW_RUNASROOT=1',
-    `./config.sh --url https://github.com/${config.githubContext.owner} --token ${githubRegistrationToken} --labels ${label}`,
-    './run.sh',
-  ];
+  if (config.input.updateRunner) {
+    userData.push('mkdir -p /actions-runner && cd /actions-runner && rm -f .runner');
+    userData.push('apt-get -y update && apt-get install -y jq');
+    userData.push('case $(uname -m) in aarch64) ARCH="arm64" ;; amd64|x86_64) ARCH="x64" ;; esac && export RUNNER_ARCH=${ARCH}');
+    userData.push('export RUNNER_VERSION=$(curl -s -X GET \'https://api.github.com/repos/actions/runner/releases/latest\' | jq -r \'.tag_name\' | sed s/v//)');
+    userData.push('curl -O -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz');
+    userData.push('tar xzf ./actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz');
+    userData.push('export RUNNER_ALLOW_RUNASROOT=1');
+    userData.push(`./config.sh --url https://github.com/${config.githubContext.owner} --token ${githubRegistrationToken} --labels ${label}`);
+    userData.push('./run.sh');
+  } else {
+    userData.push('cd /actions-runner');
+    userData.push('export RUNNER_ALLOW_RUNASROOT=1');
+    userData.push(`./config.sh --url https://github.com/${config.githubContext.owner} --token ${githubRegistrationToken} --labels ${label}`);
+    userData.push('./run.sh');
+  }
 
   const params = {
     ImageId: config.input.ec2ImageId,
@@ -28,7 +33,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
     UserData: Buffer.from(userData.join('\n')).toString('base64'),
     // SubnetId: config.input.subnetId,
     // SecurityGroupIds: [config.input.securityGroupId],
-    IamInstanceProfile: { Name: 'EC2_LOGS' },
+    IamInstanceProfile: { Name: config.input.iamRoleName },
     TagSpecifications: config.tagSpecifications,
     NetworkInterfaces: [{
       DeleteOnTermination: true,
