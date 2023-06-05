@@ -57,6 +57,36 @@ async function startEc2Instance(label, githubRegistrationToken) {
     const result = await ec2.runInstances(params).promise();
     const ec2InstanceId = result.Instances[0].InstanceId;
     core.info(`AWS EC2 instance ${ec2InstanceId} is started`);
+
+    if (config.input.elasticIp) {
+      const ipParams = {
+        AllocationId: config.input.elasticIp,
+        InstanceId: ec2InstanceId
+      };
+
+      // Retry mechanism
+      let retries = 10;
+
+      function associateAddressWithRetry() {
+        ec2.associateAddress(ipParams, function(err, data) {
+          if (err) {
+            core.info("Could not associate IP address:" + err.toString());
+            retries--;
+            if (retries > 0) {
+              core.info("Retrying IP association...");
+              setTimeout(associateAddressWithRetry, 3000);  // Wait for 3 seconds before retrying
+            } else {
+              core.info("Failed to associate IP after 10 attempts.");
+            }
+          } else {
+            core.info("Associated IP address with instance!" + data.toString());
+          }
+        });
+      }
+
+      associateAddressWithRetry();
+    }
+
     return ec2InstanceId;
   } catch (error) {
     core.error('AWS EC2 instance starting error');

@@ -34,7 +34,10 @@ inputs:
       VPC Subnet Id. The subnet should belong to the same VPC as the specified security group.
       This input is required if you use the 'start' mode.
     required: false
-
+  elastic-ip:
+    description: >-
+      Associates a certain elastic IP to the EC2 instance. Provide the 'eipalloc-0EXAMPLE' id from Elastic IP addresses page.
+    required: false
   with-subnet:
     description: >-
       Enables subnet parameter

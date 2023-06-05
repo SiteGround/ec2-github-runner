@@ -15,6 +15,7 @@ class Config {
       label: core.getInput('label'),
       ec2InstanceId: core.getInput('ec2-instance-id'),
       iamRoleName: core.getInput('iam-role-name'),
+      elasticIp: core.getInput('elastic-ip')
     };
 
     const tags = JSON.parse(core.getInput('aws-resource-tags'));
