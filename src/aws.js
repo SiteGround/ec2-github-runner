@@ -59,8 +59,21 @@ async function startEc2Instance(label, githubRegistrationToken) {
     core.info(`AWS EC2 instance ${ec2InstanceId} is started`);
 
     if (config.input.elasticIp) {
+      core.info("Searching for a free (unassigned) elastic IP...");
+      const elasticIpPool = config.input.elasticIp.trim().split(',').map(function(element) {
+        return element.trim();
+      });
+
+      const data = await ec2.describeAddresses({ AllocationIds: elasticIpPool });
+
+      const freeEip = data.Addresses.find(function(address) {
+        return !address.InstanceId;
+      });
+
+      core.info(`Elastic IP ${freeEip.AllocationId}:${freeEip.PublicIp} found without current association!`);
+
       const ipParams = {
-        AllocationId: config.input.elasticIp,
+        AllocationId: freeEip.AllocationId,
         InstanceId: ec2InstanceId
       };
 
