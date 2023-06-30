@@ -3,6 +3,7 @@ const github = require('@actions/github');
 
 class Config {
   constructor() {
+
     this.input = {
       mode: core.getInput('mode'),
       githubToken: core.getInput('github-token'),
@@ -18,7 +19,8 @@ class Config {
       elasticIp: core.getInput('elastic-ip')
     };
 
-    const tags = JSON.parse(core.getInput('aws-resource-tags'));
+    const tags = core.getInput('aws-resource-tags') ? JSON.parse(core.getInput('aws-resource-tags')) : '';
+
     this.tagSpecifications = null;
     if (tags.length > 0) {
       this.tagSpecifications = [{ResourceType: 'instance', Tags: tags}, {ResourceType: 'volume', Tags: tags}];

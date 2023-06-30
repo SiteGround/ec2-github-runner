@@ -34,20 +34,23 @@ async function getRegistrationToken() {
 }
 
 async function removeRunner() {
+  core.startGroup("De-registering github runner");
   const runner = await getRunner(config.input.label);
   const octokit = github.getOctokit(config.input.githubToken);
 
   // skip the runner removal process if the runner is not found
   if (!runner) {
     core.info(`GitHub self-hosted runner with label ${config.input.label} is not found, so the removal is skipped`);
+    core.endGroup();
     return;
   }
 
   try {
     await octokit.request('DELETE /orgs/{owner}/actions/runners/{runner_id}', _.merge(config.githubContext, { runner_id: runner.id }));
     core.info(`GitHub self-hosted runner ${runner.name} is removed`);
-    return;
+    core.endGroup();
   } catch (error) {
+    core.endGroup();
     core.error('GitHub self-hosted runner removal error');
     throw error;
   }

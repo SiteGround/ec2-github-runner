@@ -1,9 +1,10 @@
-const AWS = require('aws-sdk');
+// const EC2 = require('@aws-sdk/client-ec2');
 const core = require('@actions/core');
+const { EC2, waitUntilInstanceRunning, EC2Client } = require('@aws-sdk/client-ec2');
 const config = require('./config');
 
 async function startEc2Instance(label, githubRegistrationToken) {
-  const ec2 = new AWS.EC2();
+  const ec2 = new EC2({apiVersion: '2016-11-15'});
   const userData = [];
   userData.push('#!/bin/bash');
   // User data scripts are run as the root user.
@@ -47,18 +48,16 @@ async function startEc2Instance(label, githubRegistrationToken) {
 
   if (config.input.withSubnet) {
     params.NetworkInterfaces[0].SubnetId = config.input.subnetId;
-    // params.NetworkInterfaces[0].Groups = [config.input.securityGroupId];
   }
 
-  console.log('params', JSON.stringify(params,undefined, 2));
-  console.log('input', JSON.stringify(config.input,undefined, 2));
-
   try {
-    const result = await ec2.runInstances(params).promise();
+    core.startGroup("Starting the EC2 Instance");
+    const result = await ec2.runInstances(params);
     const ec2InstanceId = result.Instances[0].InstanceId;
     core.info(`AWS EC2 instance ${ec2InstanceId} is started`);
-
+    core.endGroup();
     if (config.input.elasticIp) {
+      core.startGroup("Assigning elastic IP to instance");
       core.info("Searching for a free (unassigned) elastic IP...");
       const elasticIpPool = config.input.elasticIp.trim().split(',').map(function(element) {
         return element.trim();
@@ -70,6 +69,10 @@ async function startEc2Instance(label, githubRegistrationToken) {
         return !address.InstanceId;
       });
 
+      if (freeEip === undefined) {
+        throw new Error(`No free IP among ids: ${elasticIpPool} found`);
+      }
+
       core.info(`Elastic IP ${freeEip.AllocationId}:${freeEip.PublicIp} found without current association!`);
 
       const ipParams = {
@@ -79,64 +82,67 @@ async function startEc2Instance(label, githubRegistrationToken) {
 
       // Retry mechanism
       let retries = 10;
-
-      function associateAddressWithRetry() {
-        ec2.associateAddress(ipParams, function(err, data) {
-          if (err) {
-            core.info("Could not associate IP address:" + err.toString());
-            retries--;
-            if (retries > 0) {
-              core.info("Retrying IP association...");
-              setTimeout(associateAddressWithRetry, 3000);  // Wait for 3 seconds before retrying
-            } else {
-              core.info("Failed to associate IP after 10 attempts.");
-            }
-          } else {
-            core.info("Associated IP address with instance!" + data.toString());
-          }
-        });
+      let result = null;
+      while(retries > 0) {
+        try {
+          result = await ec2.associateAddress(ipParams);
+          core.info("Associated IP address with instance: " + result.AssociationId);
+          break;
+        } catch (err) {
+          core.info("Could not associate IP address, retrying: " + err.toString());
+          retries--;
+          await new Promise(resolve => setTimeout(resolve, 3000)); // wait for 3 seconds before retrying
+        }
       }
-
-      associateAddressWithRetry();
+      if (retries === 0) {
+        throw new Error(`Failed to associate IP after several attempts.`);
+      }
     }
 
     return ec2InstanceId;
   } catch (error) {
     core.error('AWS EC2 instance starting error');
+    core.endGroup();
     throw error;
   }
 }
 
 async function terminateEc2Instance() {
-  const ec2 = new AWS.EC2();
+  const ec2 = new EC2({apiVersion: '2016-11-15'});
 
   const params = {
     InstanceIds: [config.input.ec2InstanceId],
   };
 
   try {
-    await ec2.terminateInstances(params).promise();
+    core.startGroup("Stopping the EC2 Instance");
+    await ec2.terminateInstances(params);
     core.info(`AWS EC2 instance ${config.input.ec2InstanceId} is terminated!!`);
-    return;
+    core.endGroup();
   } catch (error) {
     core.error(`AWS EC2 instance ${config.input.ec2InstanceId} termination error!!`);
+    core.endGroup();
     throw error;
   }
 }
 
 async function waitForInstanceRunning(ec2InstanceId) {
-  const ec2 = new AWS.EC2();
-
+  const ec2 = new EC2Client({apiVersion: '2016-11-15'});
   const params = {
-    InstanceIds: [ec2InstanceId],
+    InstanceIds: [ ec2InstanceId ],
   };
 
   try {
-    await ec2.waitFor('instanceRunning', params).promise();
+    core.startGroup("Waiting for instance to become ready");
+
+    console.log(params);
+    await waitUntilInstanceRunning({ec2, maxWaitTime: 240},  params);
+
     core.info(`AWS EC2 instance ${ec2InstanceId} is up and running!!`);
-    return;
+    core.endGroup();
   } catch (error) {
     core.error(`AWS EC2 instance ${ec2InstanceId} initialization error`);
+    core.endGroup();
     throw error;
   }
 }
