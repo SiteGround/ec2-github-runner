@@ -3,8 +3,8 @@ const github = require('@actions/github');
 
 class Config {
   constructor() {
-
     this.input = {
+      numberOfInstances: core.getInput('number-of-instances'),
       mode: core.getInput('mode'),
       githubToken: core.getInput('github-token'),
       updateRunner: core.getInput('update-runner'),
@@ -37,6 +37,20 @@ class Config {
     //
     // validate input
     //
+    if (this.input.numberOfInstances) {
+      if (typeof this.input.numberOfInstances === 'string' && this.input.numberOfInstances.trim() !== '') {
+        // Check if the string represents a positive integer
+        const num = Number(this.input.numberOfInstances);
+        if (!Number.isInteger(num) || num <= 0) {
+          throw new Error(`The 'number-of-instances' input must be a positive integer`);
+        }
+      }
+      else {
+        this.input.numberOfInstances = 1;
+      }
+    } else {
+      this.input.numberOfInstances = 1;
+    }
 
     if (!this.input.mode) {
       throw new Error(`The 'mode' input is not specified`);
